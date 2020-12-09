@@ -1,6 +1,7 @@
 package com.example.testapplication.network
 
 import androidx.room.Entity
+import com.example.testapplication.domain.Service
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -18,4 +19,13 @@ data class Services(
     @Json(name = "param")
     val param: List<Param>?,
     val example: String
+)
+
+fun Services.asDomainService(apiBase: String) = Service(
+    name = name,
+    apiBase = apiBase,
+    endpoint = endpoint,
+    method = method,
+    description = description,
+    kind = kind
 )

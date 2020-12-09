@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.testapplication.databinding.FragmentQrBinding
+import com.example.testapplication.repository.QrRepository
+import com.example.testapplication.utility.viewModelFactories
 import com.google.zxing.integration.android.IntentIntegrator
 
 
@@ -20,8 +22,8 @@ import com.google.zxing.integration.android.IntentIntegrator
  */
 class QrFragment : Fragment() {
 
-    private val viewModel: QrViewModel by viewModels {
-        QrViewModel.Factory(requireActivity().application)
+    private val qrViewModel: QrViewModel by viewModelFactories {
+        QrViewModel(QrRepository(requireContext()))
     }
 
     private lateinit var binding: FragmentQrBinding
@@ -32,10 +34,10 @@ class QrFragment : Fragment() {
     ): View {
 
         binding = FragmentQrBinding.inflate(inflater)
-        binding.viewModel = viewModel
+        binding.viewModel = qrViewModel
         binding.lifecycleOwner = this
 
-        IntentIntegrator.forSupportFragment(this).initiateScan();
+        IntentIntegrator.forSupportFragment(this).initiateScan()
 
         binding.barCodeView.decodeSingle { result ->
                     run {
@@ -67,7 +69,7 @@ class QrFragment : Fragment() {
                 Toast.makeText(this.context, "Cancelled", Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this.context, "Scanned: " + result.contents, Toast.LENGTH_LONG).show()
-                viewModel.setUrl(result.contents)
+                qrViewModel.setUrl(result.contents)
 //                //TODO: fuck my life
 //                val defaultSharedPreferences =
 //                    PreferenceManager.getDefaultSharedPreferences(context)

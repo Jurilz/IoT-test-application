@@ -21,7 +21,9 @@
             android:id="@+id/cardView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -37,9 +39,9 @@
                     android:layout_marginStart="8dp"
                     android:text="@{viewModel.apiModel.name}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    app:layout_constraintBottom_toBottomOf="@+id/loading_bar"
-                    app:layout_constraintStart_toEndOf="@+id/loading_bar"
-                    app:layout_constraintTop_toTopOf="@+id/loading_bar" />
+                    app:layout_constraintBottom_toBottomOf="@+id/loading_bar_api_model"
+                    app:layout_constraintStart_toEndOf="@+id/loading_bar_api_model"
+                    app:layout_constraintTop_toTopOf="@+id/loading_bar_api_model" />
 
                 <TextView
                     android:id="@+id/model_author"
@@ -48,17 +50,17 @@
                     android:layout_marginStart="8dp"
                     android:text="@{viewModel.apiModel.author}"
                     app:layout_constraintBottom_toBottomOf="@+id/modelName"
-                    app:layout_constraintStart_toEndOf="@+id/modelName"
-                    app:layout_constraintTop_toTopOf="@+id/modelName" />
+                    app:layout_constraintStart_toEndOf="@+id/modelName" />
 
                 <TextView
                     android:id="@+id/model_description"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
                     android:text="@{viewModel.apiModel.description}"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/modelName"
                     app:layout_constraintTop_toBottomOf="@+id/modelName" />
 
@@ -68,29 +70,33 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="@{viewModel.apiModel.apiBase}"
-                    app:layout_constraintStart_toEndOf="@+id/model_description"
-                    app:layout_constraintTop_toTopOf="@+id/model_description" />
+                    app:layout_constraintBottom_toBottomOf="@+id/model_author"
+                    app:layout_constraintStart_toEndOf="@+id/model_author" />
 
                 <ProgressBar
-                    android:id="@+id/loading_bar"
+                    android:id="@+id/loading_bar_api_model"
                     style="?android:attr/progressBarStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/done_image"
-                    app:layout_constraintEnd_toEndOf="@+id/done_image"
-                    app:layout_constraintStart_toStartOf="@+id/done_image"
-                    app:layout_constraintTop_toTopOf="@+id/done_image" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="@+id/done_image_api_model"
+                    app:layout_constraintEnd_toEndOf="@+id/done_image_api_model"
+                    app:layout_constraintStart_toStartOf="@+id/done_image_api_model"
+                    app:layout_constraintTop_toTopOf="@+id/done_image_api_model"
+                    app:visible="@{!viewModel.loadingStatus}"
+                    tools:visibility="invisible" />
 
                 <ImageView
-                    android:id="@+id/done_image"
+                    android:id="@+id/done_image_api_model"
                     android:layout_width="40dp"
-                    android:layout_height="37dp"
+                    android:layout_height="40dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:visibility="invisible"
+                    android:visibility="visible"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_done_white"
+                    app:srcCompat="@drawable/ic_done_black"
+                    app:visible="@{viewModel.loadingStatus}"
                     tools:visibility="visible" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -108,7 +114,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView"
             app:layout_constraintVertical_bias="0.0"
-            app:serviceResponses="@{viewModel.serviceResponses}" />
+            app:services="@{viewModel.services}" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/qrButton"

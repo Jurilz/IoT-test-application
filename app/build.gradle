@@ -39,21 +39,27 @@ android {
 }
 
 dependencies {
+    // MPAndroidChart
+    //implementation "com.github.PhilJay:MPAndroidChart:$mpandroidchart_version"
+
+    // PrettyTime
+    implementation "org.ocpsoft.prettytime:prettytime:$pretty_time_version"
+
     //Gson
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     //DataStore
-    implementation "androidx.datastore:datastore:1.0.0-alpha04"
+    implementation "androidx.datastore:datastore:1.0.0-alpha05"
     //Preferences
     implementation "androidx.legacy:legacy-preference-v14:1.0.0"
     implementation "androidx.preference:preference-ktx:1.1.1"
-
 
     // QR Code Scanner
     implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
 
     // Room
     implementation "androidx.room:room-runtime:$room_version"
+    implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
     kapt "androidx.room:room-compiler:$room_version"
 
     // Retrofit

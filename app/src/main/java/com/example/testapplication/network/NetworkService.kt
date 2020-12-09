@@ -6,10 +6,9 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.http.GET
-import retrofit2.Call;
+import retrofit2.Call
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Path
-import retrofit2.http.Query
 import retrofit2.http.Url
 
 const val UNIKS_WATERFILL_URL = "https://waterfill.uniks.de/api/"
@@ -23,7 +22,7 @@ interface Api {
     suspend fun sendRequest(@Path("url") url: String): Call<String>
 
     @GET
-    suspend fun getApiModel(@Url url: String): ApiModel
+    suspend fun getApiModel(@Url url: String): NetworkApiModel
 
     @GET
     suspend fun getMeasurement(@Url url: String): Measurement

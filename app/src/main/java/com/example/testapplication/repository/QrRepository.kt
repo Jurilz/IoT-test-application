@@ -2,27 +2,44 @@ package com.example.testapplication.repository
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.testapplication.domain.Url
 import com.example.testapplication.database.Database
 import com.example.testapplication.database.getDatabase
+import com.example.testapplication.domain.FlagResponse
+import com.example.testapplication.domain.Service
+import com.example.testapplication.domain.SingleResponse
 import com.example.testapplication.network.*
+import com.example.testapplication.utility.asDomainFlag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 class QrRepository(private val database: Database) {
 
-    constructor(context: Context): this(getDatabase(context))
+    constructor(context: Context) : this(getDatabase(context))
+
+
 
     private val _loadingStatus = MutableLiveData<Boolean>(false)
     val loadingStatus: LiveData<Boolean> = _loadingStatus
 
-    private val _apiModel = MutableLiveData<ApiModel>()
-    val apiModel: LiveData<ApiModel> = _apiModel
+    val currentApiModel by lazy {
+        database.apiModelDao.getLatestApiModel()
+    }
 
-    private val _serviceResponses = MutableLiveData<MutableList<ServiceResponse>>()
-    val serviceResponses: LiveData<MutableList<ServiceResponse>> = _serviceResponses
+    val currentServices: MediatorLiveData<LiveData<List<Service>>> = MediatorLiveData()
+
+    init {
+        currentServices.addSource(
+            currentApiModel
+        ) {
+            run {
+                currentServices.value = database.serviceDao.getGETServicesByApiBase(it.apiBase, "Get one value")
+            }
+        }
+    }
 
     suspend fun getUrl(): Url? = run {
         withContext(Dispatchers.IO) {
@@ -40,67 +57,62 @@ class QrRepository(private val database: Database) {
 
     suspend fun apiInfoFromUrl(url: String): Boolean = withContext(Dispatchers.IO) {
         try {
-            val model = NetworkService.API.getApiModel(url);
-
-            _apiModel.postValue(model)
-            storeResponses()
-            true
-        } catch (exception: Exception) {
-            false
-        }
-    }
-
-    suspend fun storeResponses(): Boolean = withContext(Dispatchers.IO) {
-        val servicesAndResponse = mutableListOf<ServiceResponse>()
-        try {
-            if (apiModel.value != null) {
-                apiModel.value!!.services.map {
-                    services -> getResponse(services, servicesAndResponse)
-                }
+            val model = NetworkService.API.getApiModel(url)
+            database.apiModelDao.apply {
+                setApiModel(model.asDomainApiModel())
             }
-            _serviceResponses.postValue(servicesAndResponse)
             _loadingStatus.postValue(true)
+            fetchServices(model)
             true
         } catch (exception: Exception) {
             false
         }
     }
 
-    private suspend fun getResponse(services: Services, servicesAndResponse: MutableList<ServiceResponse>) {
-        when (services.kind) {
-            ServiceKind.single.toString() -> setSingleResponse(services, servicesAndResponse)
-            ServiceKind.flag.toString() -> setFlagResponse(services, servicesAndResponse)
-            ServiceKind.timeseries.toString() -> setTimeseriesResponse(services, servicesAndResponse)
+    private fun fetchServices(apiModel: NetworkApiModel) {
+        for (service: Services in apiModel.services) {
+            database.serviceDao.apply {
+                insertService(service.asDomainService(apiBase = apiModel.apiBase))
+            }
         }
     }
 
-    private suspend fun setTimeseriesResponse(
-        services: Services,
-        servicesAndResponse: MutableList<ServiceResponse>
-    ) {
-        if (apiModel.value == null) return
-        val timeseries: List<Measurement> = NetworkService.API.getTimeseries(apiModel.value!!.apiBase + services.endpoint)
-        val serviceResponse = ServiceResponse(services, single = null, timeseries = timeseries, status = null)
-        servicesAndResponse.add(serviceResponse)
+    suspend fun fetchSingleResponse(service: Service): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val single = NetworkService.API.getMeasurement(service.apiBase + service.endpoint)
+            database.singleResponseDao.setSingle(
+                single.asDomainSingle(
+                    getUrl()!!.value,
+                    service.endpoint
+                )
+            )
+            true
+        } catch (exception: Exception) {
+            false
+        }
     }
 
-    private suspend fun setFlagResponse(
-        services: Services,
-        servicesAndResponse: MutableList<ServiceResponse>
-    ) {
-        if (apiModel.value == null) return
-        val flag: Boolean = NetworkService.API.getFlag(apiModel.value!!.apiBase + services.endpoint)
-        val serviceResponse = ServiceResponse(services, single = null, timeseries = null, status = flag)
-        servicesAndResponse.add(serviceResponse)
+    suspend fun getSingleResponseByEndpoint(service: Service): SingleResponse? {
+        return withContext(Dispatchers.IO) {
+            database.singleResponseDao.getByApiBaseAndEndpoint(service.apiBase, service.endpoint)
+        }
     }
 
-    private suspend fun setSingleResponse(services: Services, servicesAndResponse: MutableList<ServiceResponse>) {
-        if (apiModel.value == null) return
-        val singleResponse = NetworkService.API.getMeasurement(apiModel.value!!.apiBase + services.endpoint)
-        val serviceResponse = ServiceResponse(services, single = singleResponse, timeseries = null, status = null)
-        servicesAndResponse.add(serviceResponse)
+    suspend fun fetchFlagResponse(service: Service): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val flag = NetworkService.API.getFlag(service.apiBase + service.endpoint)
+            database.flagResponseDao.setFlag(flag.asDomainFlag(service.apiBase, service.endpoint))
+            true
+        } catch (exception: Exception) {
+            false
+        }
     }
 
+    suspend fun getFlagResponseByEndpoint(service: Service): FlagResponse? {
+        return withContext(Dispatchers.IO) {
+            database.flagResponseDao.getByApiBaseAndEndpoint(service.apiBase, service.endpoint)
+        }
+    }
 
 }
 

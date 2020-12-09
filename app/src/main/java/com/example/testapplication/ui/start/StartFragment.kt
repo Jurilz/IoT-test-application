@@ -5,10 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.testapplication.R
+import com.example.testapplication.adapter.ServiceCardAdapter
 import com.example.testapplication.databinding.FragmentStartBinding
+import com.example.testapplication.repository.QrRepository
+import com.example.testapplication.utility.viewModelFactories
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 
 /**
@@ -17,8 +21,8 @@ import com.example.testapplication.databinding.FragmentStartBinding
  */
 class StartFragment : Fragment() {
 
-    private val viewModel: StartViewModel by viewModels {
-        StartViewModel.Factory(requireActivity().application)
+    private val startViewModel: StartViewModel by viewModelFactories {
+        StartViewModel(QrRepository(requireContext()))
     }
 
     private lateinit var binding: FragmentStartBinding
@@ -29,8 +33,10 @@ class StartFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentStartBinding.inflate(inflater)
-        binding.viewModel = viewModel
-        binding.apiRecyclerView.adapter = ServiceCardAdapter()
+        binding.viewModel = startViewModel
+        binding.apiRecyclerView.adapter = ServiceCardAdapter(
+            QrRepository(requireContext()),
+            CoroutineScope(Dispatchers.Main))
         binding.qrButton.setOnClickListener {
             findNavController().navigate(R.id.qrFragment)
         }
@@ -40,7 +46,7 @@ class StartFragment : Fragment() {
     }
 
     override fun onResume() {
-        viewModel.getApiInformation()
+        startViewModel.getApiInformation()
         super.onResume()
     }
 }
