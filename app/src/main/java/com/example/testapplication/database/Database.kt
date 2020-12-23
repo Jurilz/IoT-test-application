@@ -13,7 +13,7 @@ import com.example.testapplication.domain.*
         FlagResponse::class,
         ApiModel::class,
         Service::class],
-    version = 12,
+    version = 13,
     exportSchema = false
 )
 abstract class Database: RoomDatabase() {
@@ -23,6 +23,8 @@ abstract class Database: RoomDatabase() {
     abstract val singleResponseDao: SingleResponseDao
 
     abstract val flagResponseDao: FlagResponseDao
+
+    abstract val timeseriesResponseDao: TimeseriesResponseDao
 
     abstract val apiModelDao: ApiModelDao
 
@@ -75,6 +77,18 @@ interface FlagResponseDao {
 
     @Insert(onConflict = REPLACE)
     fun setFlag(flagResponse: FlagResponse)
+}
+
+@Dao
+interface TimeseriesResponseDao {
+
+    @Insert(onConflict = REPLACE)
+    fun insertTimeseries(timeseries: List<DomainMeasure>)
+
+    @Query("SELECT * FROM domainmeasure WHERE apiBase = :apiBase")
+    fun getByApiBase(apiBase: String): List<DomainMeasure>?
+
+
 }
 
 @Dao

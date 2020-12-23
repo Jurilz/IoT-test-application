@@ -26,6 +26,14 @@ data class FlagResponse(
     val flag: String
 )
 
+@Entity(primaryKeys = ["apiBase", "timestamp"])
+data class DomainMeasure(
+    val apiBase: String,
+    val _id: String,
+    val value: Int,
+    val timestamp: Long
+)
+
 @Entity(primaryKeys = ["name", "apiBase"])
 data class ApiModel(
     val name: String,

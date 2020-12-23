@@ -45,7 +45,7 @@ class ServiceCardAdapter(private val qrRepository: QrRepository, private val sco
             when (service.kind) {
                 ServiceKind.single.toString() -> bindSingleResponse(service)
                 ServiceKind.flag.toString() -> bindFlagResponse(service)
-//                ServiceKind.timeseries.toString() -> setTimeseriesResponse(           )
+                ServiceKind.timeseries.toString() -> binTimeseriesResponse(service)
             }
         }
 
@@ -68,6 +68,14 @@ class ServiceCardAdapter(private val qrRepository: QrRepository, private val sco
                 binding.flagResponse = flag
             }.executePendingBindings()
             binding.loadingStatus = true
+        }
+
+        suspend fun binTimeseriesResponse(service: Service) {
+            qrRepository.fetchTimeseriesResponse(service)
+            val timeseries = qrRepository.getTimeseriesByApiBase(service)
+            binding.apply {
+
+            }
         }
     }
 

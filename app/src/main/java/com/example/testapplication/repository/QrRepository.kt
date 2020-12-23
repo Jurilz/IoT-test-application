@@ -8,6 +8,7 @@ import com.example.testapplication.domain.Url
 import com.example.testapplication.database.Database
 import com.example.testapplication.database.getDatabase
 import com.example.testapplication.domain.FlagResponse
+import com.example.testapplication.domain.DomainMeasure
 import com.example.testapplication.domain.Service
 import com.example.testapplication.domain.SingleResponse
 import com.example.testapplication.network.*
@@ -82,7 +83,7 @@ class QrRepository(private val database: Database) {
             val single = NetworkService.API.getMeasurement(service.apiBase + service.endpoint)
             database.singleResponseDao.setSingle(
                 single.asDomainSingle(
-                    getUrl()!!.value,
+                    service.apiBase,
                     service.endpoint
                 )
             )
@@ -111,6 +112,24 @@ class QrRepository(private val database: Database) {
     suspend fun getFlagResponseByEndpoint(service: Service): FlagResponse? {
         return withContext(Dispatchers.IO) {
             database.flagResponseDao.getByApiBaseAndEndpoint(service.apiBase, service.endpoint)
+        }
+    }
+
+    suspend fun fetchTimeseriesResponse(service: Service): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val timeseries: List<DomainMeasure> = NetworkService.API.getTimeseries(service.apiBase + service.endpoint).map {
+                it.asDomainMeasurement(service.apiBase)
+            }
+            database.timeseriesResponseDao.insertTimeseries(timeseries)
+            true
+        } catch (exception: Exception) {
+            false
+        }
+    }
+
+    suspend fun getTimeseriesByApiBase(service: Service): List<DomainMeasure>? {
+        return withContext(Dispatchers.IO) {
+            database.timeseriesResponseDao.getByApiBase(service.apiBase)
         }
     }
 
