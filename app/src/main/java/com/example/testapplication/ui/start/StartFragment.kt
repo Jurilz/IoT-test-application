@@ -31,10 +31,13 @@ class StartFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         // Inflate the layout for this fragment
         binding = FragmentStartBinding.inflate(inflater)
         binding.viewModel = startViewModel
+
         binding.apiRecyclerView.adapter = ServiceCardAdapter(
+            this,
             QrRepository(requireContext()),
             CoroutineScope(Dispatchers.Main))
         binding.qrButton.setOnClickListener {

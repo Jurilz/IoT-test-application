@@ -3,18 +3,23 @@ package com.example.testapplication.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testapplication.databinding.CardServiceBinding
 import com.example.testapplication.domain.Service
 import com.example.testapplication.network.ServiceKind
-import com.example.testapplication.network.Services
 import com.example.testapplication.repository.QrRepository
+import com.example.testapplication.ui.start.StartFragment
+import com.example.testapplication.utility.initLineChart
+import com.example.testapplication.utility.updateLineChart
+import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.*
+import java.util.*
 
 
-class ServiceCardAdapter(private val qrRepository: QrRepository, private val scope: CoroutineScope): ListAdapter<Service, ServiceCardAdapter.ViewHolder>(DiffCallback) {
+class ServiceCardAdapter(private val fragment: StartFragment, private val qrRepository: QrRepository, private val scope: CoroutineScope): ListAdapter<Service, ServiceCardAdapter.ViewHolder>(DiffCallback) {
 
     inner class ViewHolder(
         private val binding: CardServiceBinding,
@@ -30,9 +35,11 @@ class ServiceCardAdapter(private val qrRepository: QrRepository, private val sco
                 binding.service = service
                 binding.singleResponse = null
                 binding.flagResponse = null
-                serviceValue.visibility = View.INVISIBLE
-                serviceTimestamp.visibility = View.INVISIBLE
-                serviceFlag.visibility = View.INVISIBLE
+                serviceValue.visibility = View.GONE
+                serviceTimestamp.visibility = View.GONE
+                serviceFlag.visibility = View.GONE
+                timeseriesChart.visibility = View.GONE
+                button.visibility = View.GONE
                 loadingStatus = false
             }.executePendingBindings()
 
@@ -45,7 +52,8 @@ class ServiceCardAdapter(private val qrRepository: QrRepository, private val sco
             when (service.kind) {
                 ServiceKind.single.toString() -> bindSingleResponse(service)
                 ServiceKind.flag.toString() -> bindFlagResponse(service)
-                ServiceKind.timeseries.toString() -> binTimeseriesResponse(service)
+                ServiceKind.timeseries.toString() -> bindTimeseriesResponse(service)
+                ServiceKind.action.toString() -> bindActionButton(service)
             }
         }
 
@@ -70,14 +78,53 @@ class ServiceCardAdapter(private val qrRepository: QrRepository, private val sco
             binding.loadingStatus = true
         }
 
-        suspend fun binTimeseriesResponse(service: Service) {
+        suspend fun bindTimeseriesResponse(service: Service) {
             qrRepository.fetchTimeseriesResponse(service)
-            val timeseries = qrRepository.getTimeseriesByApiBase(service)
             binding.apply {
+                initLineChart(timeseriesChart)
+                timeseriesChart.visibility = View.VISIBLE
+            }.executePendingBindings()
 
-            }
+            qrRepository.currentMeasurements?.asLiveData()
+                ?.observe(fragment.viewLifecycleOwner,  { timeseries ->
+                    run {
+                        if (timeseries == null || timeseries.isEmpty()) return@run
+
+                        val referenceTimestamp = timeseries[0].timestamp
+                        val entries = timeseries.map { value ->
+                            Entry(
+                                (value.timestamp - referenceTimestamp).toFloat(),
+                                value.value
+                            )
+                        }
+                        // resources.configuration.locales[0] requires API level 24
+                        @Suppress("DEPRECATION")
+                        // resources.configuration.locales[0] requires API level 24
+                        updateLineChart(
+                            binding.timeseriesChart,
+                            entries,
+                            "Account Balance",
+                            Locale.GERMAN,
+                            referenceTimestamp
+                        )
+
+                    }
+                })
+
+        }
+
+        suspend fun bindActionButton(service: Service) {
+            binding.apply {
+                loadingBarCard.visibility = View.INVISIBLE
+                doneImageCard.visibility = View.INVISIBLE
+                button.visibility = View.VISIBLE
+                button.text = service.actionLabel
+            }.executePendingBindings()
+
         }
     }
+
+
 
     companion object DiffCallback: DiffUtil.ItemCallback<Service>() {
         override fun areItemsTheSame(oldItem: Service, newItem: Service): Boolean {

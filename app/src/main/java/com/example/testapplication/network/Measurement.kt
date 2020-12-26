@@ -8,7 +8,7 @@ import com.example.testapplication.utility.formatTimestamp
 @JsonClass(generateAdapter = true)
 data class Measurement(
     val _id: String,
-    val value: Int,
+    val value: Float,
     val timestamp: Long
 )
 

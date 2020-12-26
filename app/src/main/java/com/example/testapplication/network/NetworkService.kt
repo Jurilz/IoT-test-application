@@ -9,7 +9,9 @@ import retrofit2.http.GET
 import retrofit2.Call
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.Url
+import java.util.concurrent.TimeUnit
 
 const val UNIKS_WATERFILL_URL = "https://waterfill.uniks.de/api/"
 
@@ -31,12 +33,19 @@ interface Api {
     suspend fun getFlag(@Url url: String): Boolean
 
     @GET
-    suspend fun getTimeseries(@Url url: String): List<Measurement>
+    suspend fun getTimeseries(@Url url: String, @Query("timestamp") timestamp: Long): List<Measurement>
+
+    @GET
+    suspend fun sendActionCommand(@Url url: String)
 
 }
 
 object NetworkService {
     val httpClient = OkHttpClient()
+        .newBuilder()
+        .connectTimeout(1000, TimeUnit.SECONDS)
+        .readTimeout(1000, TimeUnit.SECONDS)
+        .build()
 
     val converterFactory: MoshiConverterFactory = MoshiConverterFactory.create(moshi)
 

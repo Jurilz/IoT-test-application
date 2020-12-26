@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
 import com.example.testapplication.domain.*
+import kotlinx.coroutines.flow.Flow
 
 @androidx.room.Database(
     entities = [
@@ -12,8 +13,9 @@ import com.example.testapplication.domain.*
         SingleResponse::class,
         FlagResponse::class,
         ApiModel::class,
+        DomainMeasure::class,
         Service::class],
-    version = 13,
+    version = 19,
     exportSchema = false
 )
 abstract class Database: RoomDatabase() {
@@ -85,9 +87,11 @@ interface TimeseriesResponseDao {
     @Insert(onConflict = REPLACE)
     fun insertTimeseries(timeseries: List<DomainMeasure>)
 
-    @Query("SELECT * FROM domainmeasure WHERE apiBase = :apiBase")
-    fun getByApiBase(apiBase: String): List<DomainMeasure>?
+    @Query("SELECT * FROM (SELECT * FROM domainmeasure WHERE apiBase = :apiBase ORDER BY domainmeasure.timestamp DESC LIMIT :limit) ORDER BY timestamp ASC")
+    fun getByApiBaseLimited(apiBase: String, limit: Int): List<DomainMeasure>?
 
+    @Query("SELECT * FROM (SELECT * FROM domainmeasure WHERE apiBase = :apiBase ORDER BY domainmeasure.timestamp DESC LIMIT :limit) ORDER BY timestamp ASC")
+    fun getSomeByApiBaseLimited(apiBase: String, limit: Int): Flow<List<DomainMeasure>?>
 
 }
 
@@ -99,6 +103,9 @@ interface ApiModelDao {
 
     @Query("SELECT * FROM apimodel ORDER BY apimodel.timestamp DESC LIMIT 1")
     fun getLatestApiModel(): LiveData<ApiModel>
+
+    @Query("SELECT * FROM apimodel ORDER BY apimodel.timestamp DESC LIMIT 1")
+    fun getLastApiModel(): Flow<ApiModel?>
 
     @Insert(onConflict = REPLACE)
     fun setApiModel(apiModel: ApiModel)
@@ -112,6 +119,9 @@ interface ServiceDao {
 
     @Query("SELECT * FROM service WHERE apiBase = :apiBase AND method = \"GET\" AND name NOT LIKE :filter")
     fun getGETServicesByApiBase(apiBase: String, filter: String): LiveData<List<Service>>
+
+    @Query("SELECT * FROM service WHERE apiBase = :apiBase AND method = \"GET\" AND name NOT LIKE :filter")
+    fun getGETSomeServicesByApiBase(apiBase: String, filter: String): Flow<List<Service>?>
 
     @Query("SELECT * FROM service ORDER BY service.timestamp DESC LIMIT 8")
     fun getLatestServices(): LiveData<List<Service>>

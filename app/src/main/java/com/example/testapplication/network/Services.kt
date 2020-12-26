@@ -12,6 +12,7 @@ data class Services(
     val method: String,
     val description: String,
     val kind: String?,
+    val actionLabel: String?,
     @Json(name = "body")
     val body: List<Body>?,
     @Json(name = "query")
@@ -27,5 +28,6 @@ fun Services.asDomainService(apiBase: String) = Service(
     endpoint = endpoint,
     method = method,
     description = description,
+    actionLabel = actionLabel,
     kind = kind
 )

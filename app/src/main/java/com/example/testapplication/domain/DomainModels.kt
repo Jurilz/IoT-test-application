@@ -15,7 +15,7 @@ data class SingleResponse(
     val apiBase: String,
     val endpoint: String,
     val _id: String,
-    val value: Int,
+    val value: Float,
     val timestamp: String
 )
 
@@ -30,7 +30,7 @@ data class FlagResponse(
 data class DomainMeasure(
     val apiBase: String,
     val _id: String,
-    val value: Int,
+    val value: Float,
     val timestamp: Long
 )
 
@@ -51,6 +51,7 @@ data class Service(
     val method: String,
     val description: String,
     val kind: String?,
+    val actionLabel: String?,
     val timestamp: Long = System.currentTimeMillis()
 )
 

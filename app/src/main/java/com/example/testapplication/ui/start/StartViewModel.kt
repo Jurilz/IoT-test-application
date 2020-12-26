@@ -1,7 +1,8 @@
 package com.example.testapplication.ui.start
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.example.testapplication.domain.ApiModel
+import com.example.testapplication.domain.Service
 import com.example.testapplication.repository.QrRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -9,13 +10,19 @@ import kotlinx.coroutines.withContext
 
 class StartViewModel(val qrRepository: QrRepository): ViewModel() {
 
-//    var apiModel = qrRepository.apiModel
+    val apiModel = qrRepository.apiModel.asLiveData()
 
-    val apiModel = qrRepository.currentApiModel
+//    val apiModel = qrRepository.currentApiModel
 
-    val services = qrRepository.currentServices
+//    val services = qrRepository.currentServices
+
+    val services = qrRepository.currentServices.asLiveData().value
 
     val loadingStatus = qrRepository.loadingStatus
+
+//    init {
+//        initializeQrDataSources()
+//    }
 
     fun getApiInformation() {
         viewModelScope.launch {
@@ -26,4 +33,11 @@ class StartViewModel(val qrRepository: QrRepository): ViewModel() {
             }
         }
     }
+
+//    fun initializeQrDataSources() {
+//        viewModelScope.launch {
+//            qrRepository.initializeCurrentServiceSource()
+//            qrRepository.initializeCurrentMeasurementSource()
+//        }
+//    }
 }

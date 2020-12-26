@@ -4,43 +4,59 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.testapplication.domain.Url
+import androidx.lifecycle.asLiveData
 import com.example.testapplication.database.Database
 import com.example.testapplication.database.getDatabase
-import com.example.testapplication.domain.FlagResponse
-import com.example.testapplication.domain.DomainMeasure
-import com.example.testapplication.domain.Service
-import com.example.testapplication.domain.SingleResponse
+import com.example.testapplication.domain.*
 import com.example.testapplication.network.*
 import com.example.testapplication.utility.asDomainFlag
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import java.lang.Exception
+import java.time.ZonedDateTime
+import java.util.*
+
+private const val MEASUREMENT_LIMIT: Int = 50
 
 class QrRepository(private val database: Database) {
 
     constructor(context: Context) : this(getDatabase(context))
 
-
-
-    private val _loadingStatus = MutableLiveData<Boolean>(false)
+    private val _loadingStatus = MutableLiveData(false)
     val loadingStatus: LiveData<Boolean> = _loadingStatus
 
     val currentApiModel by lazy {
         database.apiModelDao.getLatestApiModel()
     }
 
-    val currentServices: MediatorLiveData<LiveData<List<Service>>> = MediatorLiveData()
+    var currentServices: Flow<List<Service>?> = emptyFlow()
 
-    init {
-        currentServices.addSource(
-            currentApiModel
-        ) {
-            run {
-                currentServices.value = database.serviceDao.getGETServicesByApiBase(it.apiBase, "Get one value")
-            }
+    var currentMeasurements: Flow<List<DomainMeasure>?> = emptyFlow()
+
+
+    val apiModel: Flow<ApiModel?> = database.apiModelDao.getLastApiModel().onEach {
+        if (it != null) {
+            currentServices = database.serviceDao.getGETSomeServicesByApiBase(it.apiBase, "Get one value")
+
+            currentMeasurements = database.timeseriesResponseDao.getSomeByApiBaseLimited(
+                it.apiBase, MEASUREMENT_LIMIT)
         }
     }
+
+    fun getCurrentService(apiBase: String): Flow<List<Service>?> {
+        return database.serviceDao.getGETSomeServicesByApiBase(apiBase, "Get one value")
+    }
+
+    fun getCurrentMeasurements(apiBase: String): Flow<List<DomainMeasure>?> {
+        return database.timeseriesResponseDao.getSomeByApiBaseLimited(apiBase, MEASUREMENT_LIMIT)
+    }
+
+
+//    val currentServices: MediatorLiveData<LiveData<List<Service>>> = MediatorLiveData()
+
+//    val currentMeasurements: MediatorLiveData<List<DomainMeasure>> = MediatorLiveData()
 
     suspend fun getUrl(): Url? = run {
         withContext(Dispatchers.IO) {
@@ -117,21 +133,57 @@ class QrRepository(private val database: Database) {
 
     suspend fun fetchTimeseriesResponse(service: Service): Boolean = withContext(Dispatchers.IO) {
         try {
-            val timeseries: List<DomainMeasure> = NetworkService.API.getTimeseries(service.apiBase + service.endpoint).map {
-                it.asDomainMeasurement(service.apiBase)
-            }
+            val timeMonthAgo = Date.from(
+                ZonedDateTime.now().minusMonths(1).toInstant()).time
+            val result: List<Measurement> = NetworkService.API.getTimeseries(service.apiBase + service.endpoint, timeMonthAgo)
+            val timeseries = result.map { it.asDomainMeasurement(service.apiBase) }
             database.timeseriesResponseDao.insertTimeseries(timeseries)
             true
         } catch (exception: Exception) {
+            println(exception.message)
             false
         }
     }
 
     suspend fun getTimeseriesByApiBase(service: Service): List<DomainMeasure>? {
         return withContext(Dispatchers.IO) {
-            database.timeseriesResponseDao.getByApiBase(service.apiBase)
+            database.timeseriesResponseDao.getByApiBaseLimited(service.apiBase, MEASUREMENT_LIMIT)
         }
     }
 
+    suspend fun sendActionCommand(service: Service): Boolean = withContext(Dispatchers.IO) {
+        try {
+            NetworkService.API.sendActionCommand(service.apiBase + service.endpoint)
+            true
+        } catch (exeption: Exception) {
+            false
+        }
+    }
+
+//    suspend fun initializeCurrentMeasurementSource() {
+//        withContext(Dispatchers.IO) {
+//            currentMeasurements.addSource(
+//                currentApiModel
+//            ) {
+//                currentMeasurements.value = currentApiModel.value?.let { apiModel ->
+//                    database.timeseriesResponseDao.getByApiBaseLimited(
+//                        apiModel.apiBase, MEASUREMENT_LIMIT
+//                    )
+//                }
+//            }
+//        }
+//    }
+//
+//    suspend fun initializeCurrentServiceSource() {
+//        currentServices.addSource(
+//            currentApiModel
+//        ) {
+//            currentServices.value = currentApiModel.value?.let { apiModel ->
+//                database.serviceDao.getGETServicesByApiBase(
+//                    apiModel.apiBase, "Get one value")
+//            }
+//        }
+//
+//    }
 }
 

@@ -8,13 +8,11 @@ buildscript {
         moshi_version = '1.9.2'
         pretty_time_version = '4.0.4.Final'
         mpandroidchart_version = 'v3.1.0'
+        lifecycle_version = '2.2.0'
     }
     repositories {
         google()
         jcenter()
-
-        maven { url 'https://jitpack.io' }
-        
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.1'
@@ -29,6 +27,8 @@ allprojects {
     repositories {
         google()
         jcenter()
+
+        maven { url "https://jitpack.io" }
         
     }
 }
