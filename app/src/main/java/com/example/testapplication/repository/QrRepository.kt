@@ -10,10 +10,8 @@ import com.example.testapplication.database.getDatabase
 import com.example.testapplication.domain.*
 import com.example.testapplication.network.*
 import com.example.testapplication.utility.asDomainFlag
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 import java.lang.Exception
 import java.time.ZonedDateTime
 import java.util.*
@@ -31,28 +29,23 @@ class QrRepository(private val database: Database) {
         database.apiModelDao.getLatestApiModel()
     }
 
-    var currentServices: Flow<List<Service>?> = emptyFlow()
+    val apiModel: Flow<ApiModel> = database.apiModelDao.getLastApiModel()
 
-    var currentMeasurements: Flow<List<DomainMeasure>?> = emptyFlow()
-
-
-    val apiModel: Flow<ApiModel?> = database.apiModelDao.getLastApiModel().onEach {
-        if (it != null) {
-            currentServices = database.serviceDao.getGETSomeServicesByApiBase(it.apiBase, "Get one value")
-
-            currentMeasurements = database.timeseriesResponseDao.getSomeByApiBaseLimited(
-                it.apiBase, MEASUREMENT_LIMIT)
-        }
+    val currentServices: Flow<List<Service>?> = apiModel.flatMapLatest {
+        database.serviceDao.getGETSomeServicesByApiBase(it.apiBase, "Get one value")
     }
 
-    fun getCurrentService(apiBase: String): Flow<List<Service>?> {
-        return database.serviceDao.getGETSomeServicesByApiBase(apiBase, "Get one value")
+    val currentMeasurements: Flow<List<DomainMeasure>?> = apiModel.flatMapLatest {
+        database.timeseriesResponseDao.getSomeByApiBaseLimited(it.apiBase, MEASUREMENT_LIMIT)
     }
 
-    fun getCurrentMeasurements(apiBase: String): Flow<List<DomainMeasure>?> {
-        return database.timeseriesResponseDao.getSomeByApiBaseLimited(apiBase, MEASUREMENT_LIMIT)
+    fun getCurrentService(apiModel: ApiModel): Flow<List<Service>?> {
+        return database.serviceDao.getGETSomeServicesByApiBase(apiModel.apiBase, "Get one value")
     }
 
+    fun getCurrentMeasurements(apiModel: ApiModel): Flow<List<DomainMeasure>?> {
+        return database.timeseriesResponseDao.getSomeByApiBaseLimited(apiModel.apiBase, MEASUREMENT_LIMIT)
+    }
 
 //    val currentServices: MediatorLiveData<LiveData<List<Service>>> = MediatorLiveData()
 
@@ -134,7 +127,7 @@ class QrRepository(private val database: Database) {
     suspend fun fetchTimeseriesResponse(service: Service): Boolean = withContext(Dispatchers.IO) {
         try {
             val timeMonthAgo = Date.from(
-                ZonedDateTime.now().minusMonths(1).toInstant()).time
+                ZonedDateTime.now().minusMonths(2).toInstant()).time
             val result: List<Measurement> = NetworkService.API.getTimeseries(service.apiBase + service.endpoint, timeMonthAgo)
             val timeseries = result.map { it.asDomainMeasurement(service.apiBase) }
             database.timeseriesResponseDao.insertTimeseries(timeseries)

@@ -12,11 +12,7 @@ class StartViewModel(val qrRepository: QrRepository): ViewModel() {
 
     val apiModel = qrRepository.apiModel.asLiveData()
 
-//    val apiModel = qrRepository.currentApiModel
-
-//    val services = qrRepository.currentServices
-
-    val services = qrRepository.currentServices.asLiveData().value
+    val services = qrRepository.currentServices.asLiveData()
 
     val loadingStatus = qrRepository.loadingStatus
 

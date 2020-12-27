@@ -83,10 +83,12 @@ class ServiceCardAdapter(private val fragment: StartFragment, private val qrRepo
             binding.apply {
                 initLineChart(timeseriesChart)
                 timeseriesChart.visibility = View.VISIBLE
+                binding.loadingStatus = true
             }.executePendingBindings()
 
-            qrRepository.currentMeasurements?.asLiveData()
-                ?.observe(fragment.viewLifecycleOwner,  { timeseries ->
+
+            qrRepository.currentMeasurements.asLiveData()
+                .observe(fragment.viewLifecycleOwner,  { timeseries ->
                     run {
                         if (timeseries == null || timeseries.isEmpty()) return@run
 

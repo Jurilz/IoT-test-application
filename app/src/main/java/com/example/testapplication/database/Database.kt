@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
         ApiModel::class,
         DomainMeasure::class,
         Service::class],
-    version = 19,
+    version = 20,
     exportSchema = false
 )
 abstract class Database: RoomDatabase() {
@@ -105,7 +105,7 @@ interface ApiModelDao {
     fun getLatestApiModel(): LiveData<ApiModel>
 
     @Query("SELECT * FROM apimodel ORDER BY apimodel.timestamp DESC LIMIT 1")
-    fun getLastApiModel(): Flow<ApiModel?>
+    fun getLastApiModel(): Flow<ApiModel>
 
     @Insert(onConflict = REPLACE)
     fun setApiModel(apiModel: ApiModel)
@@ -119,6 +119,9 @@ interface ServiceDao {
 
     @Query("SELECT * FROM service WHERE apiBase = :apiBase AND method = \"GET\" AND name NOT LIKE :filter")
     fun getGETServicesByApiBase(apiBase: String, filter: String): LiveData<List<Service>>
+
+    @Query("SELECT * FROM service WHERE apiBase = :apiBase AND method = \"GET\" AND name NOT LIKE :filter")
+    fun testGETServicesByApiBase(apiBase: String, filter: String): List<Service>
 
     @Query("SELECT * FROM service WHERE apiBase = :apiBase AND method = \"GET\" AND name NOT LIKE :filter")
     fun getGETSomeServicesByApiBase(apiBase: String, filter: String): Flow<List<Service>?>
