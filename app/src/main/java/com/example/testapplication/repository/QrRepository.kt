@@ -29,14 +29,14 @@ class QrRepository(private val database: Database) {
         database.apiModelDao.getLatestApiModel()
     }
 
-    val apiModel: Flow<ApiModel> = database.apiModelDao.getLastApiModel()
+    val apiModel: Flow<ApiModel?> = database.apiModelDao.getLastApiModel()
 
     val currentServices: Flow<List<Service>?> = apiModel.flatMapLatest {
-        database.serviceDao.getGETSomeServicesByApiBase(it.apiBase, "Get one value")
+        if (it != null ) database.serviceDao.getGETSomeServicesByApiBase(it.apiBase, "Get one value") else emptyFlow()
     }
 
     val currentMeasurements: Flow<List<DomainMeasure>?> = apiModel.flatMapLatest {
-        database.timeseriesResponseDao.getSomeByApiBaseLimited(it.apiBase, MEASUREMENT_LIMIT)
+        if (it != null ) database.timeseriesResponseDao.getSomeByApiBaseLimited(it.apiBase, MEASUREMENT_LIMIT) else emptyFlow()
     }
 
     fun getCurrentService(apiModel: ApiModel): Flow<List<Service>?> {

@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
         ApiModel::class,
         DomainMeasure::class,
         Service::class],
-    version = 20,
+    version = 21,
     exportSchema = false
 )
 abstract class Database: RoomDatabase() {
@@ -105,7 +105,7 @@ interface ApiModelDao {
     fun getLatestApiModel(): LiveData<ApiModel>
 
     @Query("SELECT * FROM apimodel ORDER BY apimodel.timestamp DESC LIMIT 1")
-    fun getLastApiModel(): Flow<ApiModel>
+    fun getLastApiModel(): Flow<ApiModel?>
 
     @Insert(onConflict = REPLACE)
     fun setApiModel(apiModel: ApiModel)
