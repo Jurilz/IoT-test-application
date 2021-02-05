@@ -2,9 +2,7 @@ package com.example.testapplication.repository
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
 import com.example.testapplication.database.Database
 import com.example.testapplication.database.getDatabase
 import com.example.testapplication.domain.*
@@ -25,11 +23,17 @@ class QrRepository(private val database: Database) {
     private val _loadingStatus = MutableLiveData(false)
     val loadingStatus: LiveData<Boolean> = _loadingStatus
 
-    val currentApiModel by lazy {
-        database.apiModelDao.getLatestApiModel()
-    }
-
     val apiModel: Flow<ApiModel?> = database.apiModelDao.getLastApiModel()
+
+//    val url: Flow<Url?> =  database.urlDao.getLastUrl()
+
+//    val apiModel: Flow<ApiModel?> = url.flatMapLatest {
+//        if (it != null) {
+//            apiInfoFromUrl(it.value)
+//            database.apiModelDao.getApiModelBydApiBase(it.value)
+//        }
+//        else emptyFlow()
+//    }
 
     val currentServices: Flow<List<Service>?> = apiModel.flatMapLatest {
         if (it != null ) database.serviceDao.getGETSomeServicesByApiBase(it.apiBase, "Get one value") else emptyFlow()
@@ -38,18 +42,6 @@ class QrRepository(private val database: Database) {
     val currentMeasurements: Flow<List<DomainMeasure>?> = apiModel.flatMapLatest {
         if (it != null ) database.timeseriesResponseDao.getSomeByApiBaseLimited(it.apiBase, MEASUREMENT_LIMIT) else emptyFlow()
     }
-
-    fun getCurrentService(apiModel: ApiModel): Flow<List<Service>?> {
-        return database.serviceDao.getGETSomeServicesByApiBase(apiModel.apiBase, "Get one value")
-    }
-
-    fun getCurrentMeasurements(apiModel: ApiModel): Flow<List<DomainMeasure>?> {
-        return database.timeseriesResponseDao.getSomeByApiBaseLimited(apiModel.apiBase, MEASUREMENT_LIMIT)
-    }
-
-//    val currentServices: MediatorLiveData<LiveData<List<Service>>> = MediatorLiveData()
-
-//    val currentMeasurements: MediatorLiveData<List<DomainMeasure>> = MediatorLiveData()
 
     suspend fun getUrl(): Url? = run {
         withContext(Dispatchers.IO) {
@@ -75,6 +67,7 @@ class QrRepository(private val database: Database) {
             fetchServices(model)
             true
         } catch (exception: Exception) {
+            print(exception.message)
             false
         }
     }

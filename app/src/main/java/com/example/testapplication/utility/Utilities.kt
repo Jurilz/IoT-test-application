@@ -1,6 +1,7 @@
 package com.example.testapplication.utility
 
 import android.graphics.Color
+import android.view.View
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -9,6 +10,9 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.ColorTemplate
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -80,6 +84,13 @@ fun updateLineChart(
     chart.axisLeft.valueFormatter = axisLeftValueFormatter
     chart.data = ld
     chart.invalidate()
+}
+
+fun View.clicks(): Flow<Unit> = callbackFlow {
+    setOnClickListener {
+        offer(Unit)
+    }
+    awaitClose { setOnClickListener(null) }
 }
 
 

@@ -98,14 +98,14 @@ interface TimeseriesResponseDao {
 @Dao
 interface ApiModelDao {
 
-    @Query("SELECT * FROM apimodel WHERE name = :name AND apiBase = :apiBase")
-    fun getApiModelByNameAndApiBase(name: String, apiBase: String): LiveData<ApiModel>
-
-    @Query("SELECT * FROM apimodel ORDER BY apimodel.timestamp DESC LIMIT 1")
-    fun getLatestApiModel(): LiveData<ApiModel>
+    @Query("SELECT * FROM apimodel WHERE apiBase = :apiBase")
+    fun getApiModelBydApiBase(apiBase: String): Flow<ApiModel?>
 
     @Query("SELECT * FROM apimodel ORDER BY apimodel.timestamp DESC LIMIT 1")
     fun getLastApiModel(): Flow<ApiModel?>
+
+    @Query("SELECT * FROM apimodel ORDER BY apimodel.timestamp DESC LIMIT 1")
+    fun getLatestApiModel(): LiveData<ApiModel>
 
     @Insert(onConflict = REPLACE)
     fun setApiModel(apiModel: ApiModel)

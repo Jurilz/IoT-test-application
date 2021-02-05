@@ -12,10 +12,13 @@ import com.example.testapplication.domain.Service
 import com.example.testapplication.network.ServiceKind
 import com.example.testapplication.repository.QrRepository
 import com.example.testapplication.ui.start.StartFragment
+import com.example.testapplication.utility.clicks
 import com.example.testapplication.utility.initLineChart
 import com.example.testapplication.utility.updateLineChart
 import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.util.*
 
 
@@ -121,6 +124,9 @@ class ServiceCardAdapter(private val fragment: StartFragment, private val qrRepo
                 doneImageCard.visibility = View.INVISIBLE
                 button.visibility = View.VISIBLE
                 button.text = service.actionLabel
+                button.clicks().onEach {
+                    qrRepository.sendActionCommand(service)
+                }.launchIn(CoroutineScope(Dispatchers.IO))
             }.executePendingBindings()
 
         }
