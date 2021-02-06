@@ -120,7 +120,7 @@ class QrRepository(private val database: Database) {
     suspend fun fetchTimeseriesResponse(service: Service): Boolean = withContext(Dispatchers.IO) {
         try {
             val timeMonthAgo = Date.from(
-                ZonedDateTime.now().minusMonths(2).toInstant()).time
+                ZonedDateTime.now().minusMonths(2).toInstant()).time / 1000L
             val result: List<Measurement> = NetworkService.API.getTimeseries(service.apiBase + service.endpoint, timeMonthAgo)
             val timeseries = result.map { it.asDomainMeasurement(service.apiBase) }
             database.timeseriesResponseDao.insertTimeseries(timeseries)
@@ -145,31 +145,5 @@ class QrRepository(private val database: Database) {
             false
         }
     }
-
-//    suspend fun initializeCurrentMeasurementSource() {
-//        withContext(Dispatchers.IO) {
-//            currentMeasurements.addSource(
-//                currentApiModel
-//            ) {
-//                currentMeasurements.value = currentApiModel.value?.let { apiModel ->
-//                    database.timeseriesResponseDao.getByApiBaseLimited(
-//                        apiModel.apiBase, MEASUREMENT_LIMIT
-//                    )
-//                }
-//            }
-//        }
-//    }
-//
-//    suspend fun initializeCurrentServiceSource() {
-//        currentServices.addSource(
-//            currentApiModel
-//        ) {
-//            currentServices.value = currentApiModel.value?.let { apiModel ->
-//                database.serviceDao.getGETServicesByApiBase(
-//                    apiModel.apiBase, "Get one value")
-//            }
-//        }
-//
-//    }
 }
 

@@ -99,6 +99,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@{String.valueOf(singleResponse.value)}"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/service_description"
                 app:layout_constraintTop_toBottomOf="@+id/service_description" />
 
@@ -106,7 +108,7 @@
                 android:id="@+id/service_timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="12dp"
                 android:text="@{String.valueOf(singleResponse.timestamp)}"
                 app:layout_constraintBottom_toBottomOf="@+id/service_value"
                 app:layout_constraintStart_toEndOf="@+id/service_value"
@@ -118,6 +120,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@{flagResponse.flag}"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/service_description"
                 app:layout_constraintTop_toBottomOf="@+id/service_description" />
 

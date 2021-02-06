@@ -34,7 +34,7 @@ data class DomainMeasure(
     val timestamp: Long
 )
 
-@Entity(primaryKeys = ["name", "apiBase"])
+@Entity(primaryKeys = ["apiBase"])
 data class ApiModel(
     val name: String,
     val description: String,

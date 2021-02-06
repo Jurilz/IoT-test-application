@@ -24,5 +24,5 @@ fun Measurement.asDomainMeasurement(apiBase: String) = DomainMeasure(
     apiBase = apiBase,
     _id = _id,
     value = value,
-    timestamp = timestamp
+    timestamp = timestamp * 1000L
 )

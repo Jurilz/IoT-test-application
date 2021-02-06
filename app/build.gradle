@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+
 
 android {
     compileSdkVersion 29
@@ -39,6 +41,8 @@ android {
 }
 
 dependencies {
+    // license plugin
+    implementation "com.google.android.gms:play-services-oss-licenses:$play_services_oss_version"
 
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"

@@ -1,6 +1,5 @@
 package com.example.testapplication.network
 
-import androidx.room.Entity
 import com.example.testapplication.domain.Service
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
