@@ -9,7 +9,8 @@ import com.example.testapplication.domain.ApiModel
 data class NetworkApiModel(
     val name: String,
     val description: String,
-    val author: String,
+    val author: String?,
+    val autor: String?,
     val apiBase: String,
     @Json(name = "services")
     val services: List<Services>
@@ -19,5 +20,6 @@ fun NetworkApiModel.asDomainApiModel() = ApiModel(
     name = name,
     description = description,
     author = author,
+    autor = autor,
     apiBase = apiBase
 )

@@ -38,7 +38,8 @@ data class DomainMeasure(
 data class ApiModel(
     val name: String,
     val description: String,
-    val author: String,
+    val author: String?,
+    val autor: String?,
     val apiBase: String,
     val timestamp: Long = System.currentTimeMillis()
 )

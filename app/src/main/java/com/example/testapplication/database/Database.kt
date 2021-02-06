@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
         ApiModel::class,
         DomainMeasure::class,
         Service::class],
-    version = 22,
+    version = 24,
     exportSchema = false
 )
 abstract class Database: RoomDatabase() {
