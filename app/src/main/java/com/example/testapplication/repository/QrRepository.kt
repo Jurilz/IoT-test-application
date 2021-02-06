@@ -14,7 +14,7 @@ import java.lang.Exception
 import java.time.ZonedDateTime
 import java.util.*
 
-private const val MEASUREMENT_LIMIT: Int = 50
+private const val MEASUREMENT_LIMIT: Int = 1000
 
 class QrRepository(private val database: Database) {
 
@@ -126,7 +126,6 @@ class QrRepository(private val database: Database) {
             database.timeseriesResponseDao.insertTimeseries(timeseries)
             true
         } catch (exception: Exception) {
-            println(exception.message)
             false
         }
     }

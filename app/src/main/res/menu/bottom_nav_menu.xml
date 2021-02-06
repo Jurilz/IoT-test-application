@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_licenses"
+        android:icon="@drawable/ic_info_black"
+        android:title="@string/title_licenses" />
+
+    <item
+        android:id="@+id/navigation_service"
+        android:icon="@drawable/ic_article_black"
+        android:title="@string/title_service" />
+
+    <item
+        android:id="@+id/navigation_qr_scanner"
+        android:icon="@drawable/ic_qr_code_scanner_black"
+        android:title="@string/title_qr_scanner" />
+
+</menu>

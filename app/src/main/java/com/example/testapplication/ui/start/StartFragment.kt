@@ -40,9 +40,9 @@ class StartFragment : Fragment() {
             this,
             QrRepository(requireContext()),
             CoroutineScope(Dispatchers.Main))
-        binding.qrButton.setOnClickListener {
-            findNavController().navigate(R.id.qrFragment)
-        }
+//        binding.qrButton.setOnClickListener {
+//            findNavController().navigate(R.id.navigation_qr_scanner)
+//        }
         binding.lifecycleOwner = this
 
         return binding.root

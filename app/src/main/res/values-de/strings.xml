@@ -3,5 +3,7 @@
     <string name="app_name">IoT App</string>
     <string name="hello_blank_fragment">Jo Servus</string>
     <string name="push">Druegge</string>
-
+    <string name="title_licenses">Lizenzen</string>
+    <string name="title_service">Service</string>
+    <string name="title_qr_scanner">QR Scanner</string>
 </resources>

@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">IoT App</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Nice to see you</string>
     <string name="push">push</string>
+    <string name="title_licenses">Licenses</string>
+    <string name="title_service">Service</string>
+    <string name="title_qr_scanner">QR Scanner</string>
 </resources>

@@ -3,19 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/startFragment2">
+    app:startDestination="@id/navigation_service">
     <fragment
-        android:id="@+id/startFragment2"
+        android:id="@+id/navigation_service"
         android:name="com.example.testapplication.ui.start.StartFragment"
-        android:label="fragment_start"
-        tools:layout="@layout/fragment_start" >
+        android:label="@string/title_service"
+        tools:layout="@layout/fragment_start">
         <action
             android:id="@+id/action_startFragment2_to_qrFragment"
-            app:destination="@id/qrFragment" />
+            app:destination="@id/navigation_qr_scanner" />
     </fragment>
     <fragment
-        android:id="@+id/qrFragment"
+        android:id="@+id/navigation_qr_scanner"
         android:name="com.example.testapplication.ui.qr.QrFragment"
-        android:label="fragment_qr"
+        android:label="@string/title_qr_scanner"
         tools:layout="@layout/fragment_qr" />
+    <fragment
+        android:id="@+id/navigation_licenses"
+        android:name="com.example.testapplication.ui.licenses.LicensesFragment"
+        android:label="@string/title_licenses"
+        tools:layout="@layout/fragment_licenses" />
 </navigation>

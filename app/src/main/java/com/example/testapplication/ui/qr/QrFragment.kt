@@ -70,12 +70,6 @@ class QrFragment : Fragment() {
             } else {
                 Toast.makeText(this.context, "Scanned: " + result.contents, Toast.LENGTH_LONG).show()
                 qrViewModel.setUrl(result.contents)
-//                //TODO: fuck my life
-//                val defaultSharedPreferences =
-//                    PreferenceManager.getDefaultSharedPreferences(context)
-//                val edit = defaultSharedPreferences.edit()
-//                edit.putString("url", result.contents)
-//                edit.apply()
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)

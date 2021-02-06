@@ -12,13 +12,12 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/qrFragment"
+        android:id="@+id/navigation_qr_scanner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.qr.QrFragment">
 
 
-        <!-- TODO: Update blank fragment layout -->
         <com.journeyapps.barcodescanner.DecoratedBarcodeView
             android:id="@+id/barCodeView"
             android:layout_width="0dp"

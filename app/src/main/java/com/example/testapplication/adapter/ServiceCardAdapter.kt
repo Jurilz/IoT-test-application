@@ -108,7 +108,7 @@ class ServiceCardAdapter(private val fragment: StartFragment, private val qrRepo
                         updateLineChart(
                             binding.timeseriesChart,
                             entries,
-                            "Account Balance",
+                            "Last Measurements of 2 Months",
                             Locale.GERMAN,
                             referenceTimestamp
                         )
