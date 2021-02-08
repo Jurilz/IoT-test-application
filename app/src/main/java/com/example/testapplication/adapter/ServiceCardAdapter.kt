@@ -123,7 +123,7 @@ class ServiceCardAdapter(private val fragment: StartFragment, private val qrRepo
                 loadingBarCard.visibility = View.INVISIBLE
                 doneImageCard.visibility = View.INVISIBLE
                 button.visibility = View.VISIBLE
-                button.text = service.actionLabel
+                button.text = service.actionLabel ?: "Action"
                 button.clicks().onEach {
                     qrRepository.sendActionCommand(service)
                 }.launchIn(CoroutineScope(Dispatchers.IO))
