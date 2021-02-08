@@ -140,7 +140,7 @@ class QrRepository(private val database: Database) {
         try {
             NetworkService.API.sendActionCommand(service.apiBase + service.endpoint)
             true
-        } catch (exeption: Exception) {
+        } catch (exception: Exception) {
             false
         }
     }
