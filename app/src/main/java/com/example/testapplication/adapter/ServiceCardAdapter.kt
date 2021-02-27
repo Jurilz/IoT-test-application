@@ -27,7 +27,7 @@ class ServiceCardAdapter(
     private val fragment: StartFragment,
     private val qrRepository: QrRepository,
     private val scope: CoroutineScope
-    ) : ListAdapter<Service, ServiceCardAdapter.ViewHolder>(DiffCallback) {
+) : ListAdapter<Service, ServiceCardAdapter.ViewHolder>(DiffCallback) {
 
     inner class ViewHolder(
         private val binding: CardServiceBinding,
