@@ -15,6 +15,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 private const val MEASUREMENT_LIMIT: Int = 1000
+private const val MS_FACTOR: Long = 1000L
 
 class QrRepository(private val database: Database) {
 
@@ -110,7 +111,7 @@ class QrRepository(private val database: Database) {
     suspend fun fetchTimeseriesResponse(service: Service): Boolean = withContext(Dispatchers.IO) {
         try {
             val timeMonthAgo = Date.from(
-                ZonedDateTime.now().minusMonths(2).toInstant()).time / 1000L
+                ZonedDateTime.now().minusMonths(2).toInstant()).time / MS_FACTOR
             val result: List<Measurement> = NetworkService.API.getTimeseries(service.apiBase + service.endpoint, timeMonthAgo)
             val timeseries = result.map { it.asDomainMeasurement(service.apiBase) }
             database.timeseriesResponseDao.insertTimeseries(timeseries)

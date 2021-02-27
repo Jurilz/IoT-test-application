@@ -98,7 +98,7 @@ class TimestampValueFormatter(private val referenceTimestamp: Long, locale: Loca
     }
 }
 
-class SomeValueFormatter() : ValueFormatter() {
+class SomeValueFormatter : ValueFormatter() {
     override fun getFormattedValue(value: Float): String {
         return value.toString()
     }

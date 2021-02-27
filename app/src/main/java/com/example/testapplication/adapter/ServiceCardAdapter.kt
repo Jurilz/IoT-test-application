@@ -23,7 +23,11 @@ import kotlinx.coroutines.flow.onEach
 
 const val DEFAULT_BUTTON_NAME = "Action"
 
-class ServiceCardAdapter(private val fragment: StartFragment, private val qrRepository: QrRepository, private val scope: CoroutineScope) : ListAdapter<Service, ServiceCardAdapter.ViewHolder>(DiffCallback) {
+class ServiceCardAdapter(
+    private val fragment: StartFragment,
+    private val qrRepository: QrRepository,
+    private val scope: CoroutineScope
+    ) : ListAdapter<Service, ServiceCardAdapter.ViewHolder>(DiffCallback) {
 
     inner class ViewHolder(
         private val binding: CardServiceBinding,

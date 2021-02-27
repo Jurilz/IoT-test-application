@@ -13,6 +13,7 @@ import retrofit2.http.Query
 import retrofit2.http.Url
 
 const val UNIKS_WATERFILL_URL = "https://waterfill.uniks.de/api/"
+const val TIMEOUT: Long = 1000
 
 val moshi: Moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
@@ -41,8 +42,8 @@ interface Api {
 object NetworkService {
     val httpClient = OkHttpClient()
         .newBuilder()
-        .connectTimeout(1000, TimeUnit.SECONDS)
-        .readTimeout(1000, TimeUnit.SECONDS)
+        .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+        .readTimeout(TIMEOUT, TimeUnit.SECONDS)
         .build()
 
     val converterFactory: MoshiConverterFactory = MoshiConverterFactory.create(moshi)
