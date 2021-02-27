@@ -1,19 +1,16 @@
 package com.example.testapplication.ui.start
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
-import com.example.testapplication.R
+import androidx.fragment.app.Fragment
 import com.example.testapplication.adapter.ServiceCardAdapter
 import com.example.testapplication.databinding.FragmentStartBinding
 import com.example.testapplication.repository.QrRepository
 import com.example.testapplication.utility.viewModelFactories
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-
 
 /**
  * A simple [Fragment] subclass.
@@ -28,7 +25,8 @@ class StartFragment : Fragment() {
     private lateinit var binding: FragmentStartBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 

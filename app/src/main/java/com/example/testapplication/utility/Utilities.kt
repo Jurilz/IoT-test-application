@@ -10,16 +10,13 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.ColorTemplate
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import java.text.SimpleDateFormat
-import java.util.*
 
 fun initLineChart(chart: LineChart) {
-//    tfLight = Typeface.createFromAsset(context.assets, "OpenSans-Light.ttf")
-//    tfRegular = Typeface.createFromAsset(context.assets, "OpenSans-Regular.ttf")
-
     val xAxis = chart.xAxis
     val yAxis = chart.axisLeft
 
@@ -35,17 +32,14 @@ fun initLineChart(chart: LineChart) {
     xAxis.setDrawAxisLine(false)
     xAxis.setLabelCount(2, false)
     xAxis.textColor = Color.WHITE
-//    xAxis.typeface = tfLight
 
     yAxis.gridColor = Color.GRAY
     yAxis.setDrawAxisLine(false)
     yAxis.setLabelCount(2, false)
     yAxis.textColor = Color.WHITE
-//    yAxis.typeface = tfLight
 
     chart.invalidate()
 }
-
 
 fun updateLineChart(
     chart: LineChart,
@@ -93,22 +87,18 @@ fun View.clicks(): Flow<Unit> = callbackFlow {
     awaitClose { setOnClickListener(null) }
 }
 
-
 class TimestampValueFormatter(private val referenceTimestamp: Long, locale: Locale) :
     ValueFormatter() {
     private val dateFormatter =
         SimpleDateFormat("dd.MM.yy", locale)
 
-
     override fun getFormattedValue(value: Float): String {
-        // "toInt()" required to workaround inaccurate results due to unchangeable float usage
         val recalculatedValue = value.toInt() + referenceTimestamp
         return dateFormatter.format(recalculatedValue)
     }
 }
 
 class SomeValueFormatter() : ValueFormatter() {
-
     override fun getFormattedValue(value: Float): String {
         return value.toString()
     }

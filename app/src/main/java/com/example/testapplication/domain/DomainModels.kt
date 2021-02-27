@@ -14,7 +14,7 @@ data class Url(
 data class SingleResponse(
     val apiBase: String,
     val endpoint: String,
-    val _id: String,
+    val _id: String?,
     val value: Float,
     val timestamp: String
 )
@@ -29,7 +29,7 @@ data class FlagResponse(
 @Entity(primaryKeys = ["apiBase", "timestamp"])
 data class DomainMeasure(
     val apiBase: String,
-    val _id: String,
+    val _id: String?,
     val value: Float,
     val timestamp: Long
 )

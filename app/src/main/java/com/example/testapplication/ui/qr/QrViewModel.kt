@@ -6,7 +6,7 @@ import com.example.testapplication.domain.Url
 import com.example.testapplication.repository.QrRepository
 import kotlinx.coroutines.launch
 
-class QrViewModel(private val  qrRepository: QrRepository): ViewModel() {
+class QrViewModel(private val qrRepository: QrRepository) : ViewModel() {
 
     fun setUrl(url: String) {
         viewModelScope.launch {

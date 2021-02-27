@@ -15,10 +15,10 @@ import kotlinx.coroutines.flow.Flow
         ApiModel::class,
         DomainMeasure::class,
         Service::class],
-    version = 24,
+    version = 25,
     exportSchema = false
 )
-abstract class Database: RoomDatabase() {
+abstract class Database : RoomDatabase() {
 
     abstract val urlDao: UrlDao
 
@@ -92,7 +92,6 @@ interface TimeseriesResponseDao {
 
     @Query("SELECT * FROM (SELECT * FROM domainmeasure WHERE apiBase = :apiBase ORDER BY domainmeasure.timestamp DESC LIMIT :limit) ORDER BY timestamp ASC")
     fun getSomeByApiBaseLimited(apiBase: String, limit: Int): Flow<List<DomainMeasure>?>
-
 }
 
 @Dao
@@ -132,4 +131,3 @@ interface ServiceDao {
     @Insert(onConflict = REPLACE)
     fun insertService(service: Service)
 }
-

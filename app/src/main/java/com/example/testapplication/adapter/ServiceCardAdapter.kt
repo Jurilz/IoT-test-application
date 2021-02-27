@@ -16,19 +16,20 @@ import com.example.testapplication.utility.clicks
 import com.example.testapplication.utility.initLineChart
 import com.example.testapplication.utility.updateLineChart
 import com.github.mikephil.charting.data.Entry
+import java.util.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import java.util.*
 
+const val DEFAULT_BUTTON_NAME = "Action"
 
-class ServiceCardAdapter(private val fragment: StartFragment, private val qrRepository: QrRepository, private val scope: CoroutineScope): ListAdapter<Service, ServiceCardAdapter.ViewHolder>(DiffCallback) {
+class ServiceCardAdapter(private val fragment: StartFragment, private val qrRepository: QrRepository, private val scope: CoroutineScope) : ListAdapter<Service, ServiceCardAdapter.ViewHolder>(DiffCallback) {
 
     inner class ViewHolder(
         private val binding: CardServiceBinding,
         private val qrRepository: QrRepository,
         private val scope: CoroutineScope
-        ): RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         private var job: Job? = null
 
@@ -89,9 +90,8 @@ class ServiceCardAdapter(private val fragment: StartFragment, private val qrRepo
                 binding.loadingStatus = true
             }.executePendingBindings()
 
-
             qrRepository.currentMeasurements.asLiveData()
-                .observe(fragment.viewLifecycleOwner,  { timeseries ->
+                .observe(fragment.viewLifecycleOwner, { timeseries ->
                     run {
                         if (timeseries == null || timeseries.isEmpty()) return@run
 
@@ -112,10 +112,8 @@ class ServiceCardAdapter(private val fragment: StartFragment, private val qrRepo
                             Locale.GERMAN,
                             referenceTimestamp
                         )
-
                     }
                 })
-
         }
 
         suspend fun bindActionButton(service: Service) {
@@ -123,18 +121,15 @@ class ServiceCardAdapter(private val fragment: StartFragment, private val qrRepo
                 loadingBarCard.visibility = View.INVISIBLE
                 doneImageCard.visibility = View.INVISIBLE
                 button.visibility = View.VISIBLE
-                button.text = service.actionLabel ?: "Action"
+                button.text = service.actionLabel ?: DEFAULT_BUTTON_NAME
                 button.clicks().onEach {
                     qrRepository.sendActionCommand(service)
                 }.launchIn(CoroutineScope(Dispatchers.IO))
             }.executePendingBindings()
-
         }
     }
 
-
-
-    companion object DiffCallback: DiffUtil.ItemCallback<Service>() {
+    companion object DiffCallback : DiffUtil.ItemCallback<Service>() {
         override fun areItemsTheSame(oldItem: Service, newItem: Service): Boolean {
             return oldItem.name == newItem.name
         }

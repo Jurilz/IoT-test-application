@@ -1,13 +1,13 @@
 package com.example.testapplication.network
 
-import com.squareup.moshi.JsonClass
-import com.example.testapplication.domain.SingleResponse
 import com.example.testapplication.domain.DomainMeasure
+import com.example.testapplication.domain.SingleResponse
 import com.example.testapplication.utility.formatTimestamp
+import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class Measurement(
-    val _id: String,
+    val _id: String?,
     val value: Float,
     val timestamp: Long
 )

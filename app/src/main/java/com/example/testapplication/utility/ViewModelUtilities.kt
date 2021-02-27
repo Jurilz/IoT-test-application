@@ -5,7 +5,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-inline fun <reified  VM: ViewModel> Fragment.viewModelFactories(
+inline fun <reified VM : ViewModel> Fragment.viewModelFactories(
     crossinline provider: () -> VM
 ): Lazy<VM> {
     val factoryProducer = {

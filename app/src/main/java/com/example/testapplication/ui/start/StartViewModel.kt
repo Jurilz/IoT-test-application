@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class StartViewModel(val qrRepository: QrRepository): ViewModel() {
+class StartViewModel(val qrRepository: QrRepository) : ViewModel() {
 
     val apiModel = qrRepository.apiModel.asLiveData()
 

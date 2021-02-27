@@ -1,6 +1,5 @@
 package com.example.testapplication.ui.qr
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,12 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import com.example.testapplication.databinding.FragmentQrBinding
 import com.example.testapplication.repository.QrRepository
 import com.example.testapplication.utility.viewModelFactories
 import com.google.zxing.integration.android.IntentIntegrator
-
 
 /**
  * A simple [Fragment] subclass.
@@ -29,7 +26,8 @@ class QrFragment : Fragment() {
     private lateinit var binding: FragmentQrBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 

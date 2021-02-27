@@ -1,17 +1,16 @@
 package com.example.testapplication.network
 
-
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import java.util.concurrent.TimeUnit
 import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.http.GET
 import retrofit2.Call
+import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Url
-import java.util.concurrent.TimeUnit
 
 const val UNIKS_WATERFILL_URL = "https://waterfill.uniks.de/api/"
 
@@ -37,7 +36,6 @@ interface Api {
 
     @GET
     suspend fun sendActionCommand(@Url url: String)
-
 }
 
 object NetworkService {

@@ -11,9 +11,10 @@ import com.example.testapplication.R
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 
 class LicensesFragment : Fragment() {
-    
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
@@ -23,5 +24,4 @@ class LicensesFragment : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_licenses, container, false)
     }
-
 }

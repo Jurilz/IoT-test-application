@@ -7,4 +7,3 @@ fun Boolean.asDomainFlag(apiBase: String, endpoint: String) = FlagResponse(
     endpoint = endpoint,
     flag = this.toString()
 )
-

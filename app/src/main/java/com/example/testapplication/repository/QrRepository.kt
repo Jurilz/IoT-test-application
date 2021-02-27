@@ -8,11 +8,11 @@ import com.example.testapplication.database.getDatabase
 import com.example.testapplication.domain.*
 import com.example.testapplication.network.*
 import com.example.testapplication.utility.asDomainFlag
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
 import java.lang.Exception
 import java.time.ZonedDateTime
 import java.util.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 private const val MEASUREMENT_LIMIT: Int = 1000
 
@@ -25,22 +25,12 @@ class QrRepository(private val database: Database) {
 
     val apiModel: Flow<ApiModel?> = database.apiModelDao.getLastApiModel()
 
-//    val url: Flow<Url?> =  database.urlDao.getLastUrl()
-
-//    val apiModel: Flow<ApiModel?> = url.flatMapLatest {
-//        if (it != null) {
-//            apiInfoFromUrl(it.value)
-//            database.apiModelDao.getApiModelBydApiBase(it.value)
-//        }
-//        else emptyFlow()
-//    }
-
     val currentServices: Flow<List<Service>?> = apiModel.flatMapLatest {
-        if (it != null ) database.serviceDao.getGETSomeServicesByApiBase(it.apiBase, "Get one value") else emptyFlow()
+        if (it != null) database.serviceDao.getGETSomeServicesByApiBase(it.apiBase, "Get one value") else emptyFlow()
     }
 
     val currentMeasurements: Flow<List<DomainMeasure>?> = apiModel.flatMapLatest {
-        if (it != null ) database.timeseriesResponseDao.getSomeByApiBaseLimited(it.apiBase, MEASUREMENT_LIMIT) else emptyFlow()
+        if (it != null) database.timeseriesResponseDao.getSomeByApiBaseLimited(it.apiBase, MEASUREMENT_LIMIT) else emptyFlow()
     }
 
     suspend fun getUrl(): Url? = run {
@@ -145,4 +135,3 @@ class QrRepository(private val database: Database) {
         }
     }
 }
-

@@ -1,9 +1,8 @@
 package com.example.testapplication.network
 
+import com.example.testapplication.domain.ApiModel
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-
-import com.example.testapplication.domain.ApiModel
 
 @JsonClass(generateAdapter = true)
 data class NetworkApiModel(

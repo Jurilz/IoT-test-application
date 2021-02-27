@@ -1,7 +1,7 @@
 package com.example.testapplication.utility
 
-import org.ocpsoft.prettytime.PrettyTime
 import java.util.*
+import org.ocpsoft.prettytime.PrettyTime
 
 fun formatTimestamp(timestamp: Long): String {
     val prettyTime = PrettyTime(Locale.getDefault())
